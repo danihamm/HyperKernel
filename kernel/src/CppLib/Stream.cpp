@@ -76,6 +76,6 @@ kcp::cstringstream& kcp::cstringstream::operator<<(base nb)
     current_base = nb;
 }
 
-const char* kcp::cstringstream::str() {
+const char* kcp::cstringstream::cstr() {
     return this->string;
 }
