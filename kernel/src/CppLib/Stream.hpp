@@ -27,6 +27,7 @@ namespace kcp {
 
     public:
         cstringstream();
+        ~cstringstream();
         
         cstringstream& operator<<(char c);
         cstringstream& operator<<(char* str);

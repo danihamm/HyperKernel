@@ -15,11 +15,17 @@ kcp::cstringstream::cstringstream()
     this->size = 0;
 }
 
+kcp::cstringstream::~cstringstream()
+{
+    delete this->string;
+}
+
 kcp::cstringstream& kcp::cstringstream::operator<<(char c) {
     this->string = (const char *)Memory::g_allocator->Realloc((void *)this->string, this->size + 1);
 
     if (!this->string)
     {
+        kerr << "Streaming failed due to failed allocation" << Kt::newline;
         return *this;
     }
     
