@@ -3,7 +3,6 @@
 void Panic(const char *meditationString, System::Registers registers) {
     kerr << "=========== Kernel panic ===========" << Kt::newline;
     kerr << meditationString << Kt::newline;
-    
 
     while (true) {
         #if defined (__x86_64__)

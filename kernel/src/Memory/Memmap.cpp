@@ -1,8 +1,8 @@
 #include "Memmap.hpp"
-#include <KernelTerminal/terminal.hpp>
+#include <Terminal/terminal.hpp>
 #include <Common/Panic.hpp>
 
-#include "PageAllocator.hpp"
+#include "MemoryAllocator.hpp"
 
 using namespace Kt;
 

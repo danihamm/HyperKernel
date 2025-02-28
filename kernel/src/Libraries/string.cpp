@@ -14,7 +14,7 @@ namespace Lib
         char * str = (char *)&output;
 
         if (!num) {
-            return "0";
+            return (char *)"0";
         }
 
         char base[] = "0123456789ABCDEFGH"; // IJKLMN ....
@@ -48,7 +48,7 @@ namespace Lib
         char * str = (char *)&output;
 
         if (!num) {
-            return "0";
+            return (char *)"0";
         }
 
         char base[] = "0123456789ABCDEFGH"; // IJKLMN ....

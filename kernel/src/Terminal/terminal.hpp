@@ -3,6 +3,9 @@
 #include <cstddef>
 
 #include <Libraries/string.hpp>
+#include <CppLib/Stream.hpp>
+
+using namespace kcp;
 
 namespace Kt
 {
@@ -20,13 +23,6 @@ namespace Kt
                     std::uint8_t blue_mask_size, std::uint8_t blue_mask_shift);
     void Putchar(char c);
     void Print(const char *text);
-
-    enum base
-    {
-        oct = 8,
-        dec = 10,
-        hex = 16
-    };
 
     inline base base_custom(int custom)
     {

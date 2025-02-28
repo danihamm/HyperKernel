@@ -3,7 +3,7 @@
 */
 
 #include "GDT.hpp"
-#include "../KernelTerminal/terminal.hpp"
+#include "../Terminal/terminal.hpp"
 
 // Limine loads a GDT of course, (CS = 0x28) but we will need to make a TSS someday... therefore we load our own now
 

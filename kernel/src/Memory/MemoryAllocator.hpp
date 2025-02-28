@@ -2,7 +2,7 @@
 #include "Memmap.hpp"
 
 namespace Memory {
-    class PageAllocator {
+    class Allocator {
         LargestSection g_section;
 
         struct Block {
@@ -10,15 +10,20 @@ namespace Memory {
             Block* next;
         };
 
+        struct BlockDescriptor {
+            size_t block_size;
+        };
+
         Block head;
     public:
-        PageAllocator(LargestSection section);
-        void* RequestPage(bool phys = false);
+        Allocator(LargestSection section);
+        void* Request(size_t size, bool phys = false);
+        void* Realloc(void* ptr, size_t size);
         void Free(void *pagePtr);
 
         void Stress();
         void Walk();
     };
 
-    extern PageAllocator* KernelPFA;
+    extern Allocator* g_allocator;
 };

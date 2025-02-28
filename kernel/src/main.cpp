@@ -1,19 +1,27 @@
+/*
+    * main.cpp
+    * Kernel entry point
+    * Copyright (c) 2025 Daniel Hammer
+*/
+
 #include <cstdint>
 #include <cstddef>
 #include <limine.h>
 
 #include <Hal/GDT.hpp>
-#include <KernelTerminal/terminal.hpp>
+#include <Terminal/terminal.hpp>
 #include <Libraries/string.hpp>
 #include <Efi/UEFI.hpp>
 #include <Common/Panic.hpp>
 #include <Memory/Memmap.hpp>
-#include <Memory/PageAllocator.hpp>
+#include <Memory/MemoryAllocator.hpp>
+
+#include <CppLib/Stream.hpp>
 
 using namespace Kt;
 
 namespace Memory {
-    PageAllocator* KernelPFA;
+    Allocator* g_allocator;
     uint64_t HHDMBase;
 };
 
@@ -212,14 +220,6 @@ extern "C" void kmain() {
         fb_ptr[i * (framebuffer->pitch / 4) + (i - 5*5)] = 0xFF0000; // Red
         fb_ptr[i * (framebuffer->pitch / 4) + (i - 10*5)] = 0x00FF00; // Green
         fb_ptr[i * (framebuffer->pitch / 4) + (i - 15*5)] = 0x0000FF; // Blue
-
-        // fb_ptr[i * (framebuffer->pitch / 4) + (i - 20*5)] = 0xFF0000; // Red
-        // fb_ptr[i * (framebuffer->pitch / 4) + (i - 25*5)] = 0x00FF00; // Green
-        // fb_ptr[i * (framebuffer->pitch / 4) + (i - 30*5)] = 0x0000FF; // Blue
-
-        // fb_ptr[i * (framebuffer->pitch / 4) + (i - 35*5)] = 0xFF0000; // Red
-        // fb_ptr[i * (framebuffer->pitch / 4) + (i - 40*5)] = 0x00FF00; // Green
-        // fb_ptr[i * (framebuffer->pitch / 4) + (i - 45*5)] = 0x0000FF; // Blue
     }
 
     uint64_t hhdm_offset = hhdm_request.response->offset;
@@ -235,15 +235,15 @@ extern "C" void kmain() {
     }
 
     if (memmap_request.response != nullptr) {
-        auto result = Memory::Scan(memmap_request.response);
-        auto allocator = Memory::PageAllocator(result);
+        kout << "[Mem] Creating Allocator for system conventional memory" << newline;
 
-        kout << "[Mem] Creating PageAllocator for system conventional memory" << newline;
-        Memory::KernelPFA = &allocator;
+        auto result = Memory::Scan(memmap_request.response);
+        auto allocator = Memory::Allocator(result);
+
+        Memory::g_allocator = &allocator;
     } else {
         Panic("Guru Meditation Error: System memory map missing!", System::Registers{});
     }
 
-    
     hcf();
 }

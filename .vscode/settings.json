@@ -62,6 +62,13 @@
         "streambuf": "cpp",
         "text_encoding": "cpp",
         "thread": "cpp",
-        "cinttypes": "cpp"
+        "cinttypes": "cpp",
+        "bitset": "cpp",
+        "ranges": "cpp",
+        "hash_map": "cpp",
+        "rope": "cpp",
+        "slist": "cpp",
+        "stacktrace": "cpp",
+        "regex": "cpp"
     }
 }
