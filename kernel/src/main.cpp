@@ -17,6 +17,7 @@
 #include <Memory/Heap.hpp>
 
 #include <CppLib/Stream.hpp>
+#include <CppLib/Vector.hpp>
 
 using namespace Kt;
 
