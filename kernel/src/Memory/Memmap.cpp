@@ -2,7 +2,7 @@
 #include <Terminal/terminal.hpp>
 #include <Common/Panic.hpp>
 
-#include "MemoryAllocator.hpp"
+#include "Heap.hpp"
 
 using namespace Kt;
 

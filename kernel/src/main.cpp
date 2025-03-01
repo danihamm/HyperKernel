@@ -14,7 +14,7 @@
 #include <Efi/UEFI.hpp>
 #include <Common/Panic.hpp>
 #include <Memory/Memmap.hpp>
-#include <Memory/MemoryAllocator.hpp>
+#include <Memory/Heap.hpp>
 
 #include <CppLib/Stream.hpp>
 

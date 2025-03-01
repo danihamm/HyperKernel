@@ -5,7 +5,7 @@
 */
 
 #include "Stream.hpp"
-#include <Memory/MemoryAllocator.hpp>
+#include <Memory/Heap.hpp>
 #include <Terminal/terminal.hpp>
 #include <Libraries/string.hpp>
 

@@ -4,7 +4,7 @@
     * Copyright (c) 2025 Daniel Hammer
 */
 
-#include "MemoryAllocator.hpp"
+#include "Heap.hpp"
 #include "Memmap.hpp"
 #include "HHDM.hpp"
 

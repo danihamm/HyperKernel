@@ -4,7 +4,7 @@
 */
 
 #include <cstddef>
-#include <Memory/MemoryAllocator.hpp>
+#include <Memory/Heap.hpp>
 
 void* operator new(std::size_t size)
 {
