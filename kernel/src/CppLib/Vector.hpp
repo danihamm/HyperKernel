@@ -24,9 +24,9 @@ namespace kcp
             array = nullptr;
         }
 
-        T operator[](std::int64_t position)
+        T operator[](std::size_t position)
         {
-            if (position > (sz + 1)) {
+            if (position > (sz - 1)) {
                 kerr << "Vector out of bounds caught!" << Kt::newline;
                 return T{};
             }
@@ -41,17 +41,13 @@ namespace kcp
         }
 
         void push_back(T value) {
-            array = (T *)Memory::g_allocator->Realloc(array, sz + 1);
+            array = (T *)Memory::g_allocator->Realloc(array, sizeof(T) * (sz + 1));
             array[sz++] = value;
         }
 
-        void test() {
-            array = (T *)Memory::g_allocator->Realloc(array, sz + 1);
-        }
-
-        T& get_array()
+        T* get_array()
         {
-            return *array;
+            return array;
         }
     };
 };
