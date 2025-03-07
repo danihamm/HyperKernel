@@ -13,12 +13,6 @@
 
 namespace Memory
 {
-#if defined(__x86_64__) || defined(__aarch64__)
-#define PAGE_SIZE 0x1000
-#else
-#error Sorry, Unimplemented!
-#endif
-
     HeapAllocator::HeapAllocator(LargestSection section)
     {
         g_section = section;
