@@ -56,7 +56,7 @@ namespace Memory
                 BlockDescriptor* descriptor {(BlockDescriptor *)current_block_ptr};
                 descriptor->block_size = size;
                 
-                void* block_start = (void *)(uint64_t)current_block_ptr + descriptor_size;
+                void* block_start = (void *)((uint64_t)current_block_ptr + descriptor_size);
 
                 if (!block_copy.size) {
                     current_prev_ptr->next = block_copy.next;

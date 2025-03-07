@@ -29,8 +29,8 @@ namespace Memory {
     uint64_t HHDMBase;
 };
 
-KernelOutStream kout;
-KernelErrorStream kerr;
+KernelOutStream kout{};
+KernelErrorStream kerr{};
 
 // Extern declarations for global constructors array.
 extern void (*__init_array[])();

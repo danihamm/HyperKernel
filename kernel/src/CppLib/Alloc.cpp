@@ -16,3 +16,8 @@ void operator delete(void* block)
 {
     Memory::g_heap->Free(block);
 }
+
+void operator delete(void* block, long unsigned int)
+{
+    Memory::g_heap->Free(block);
+}

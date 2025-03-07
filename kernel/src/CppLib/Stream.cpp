@@ -74,6 +74,8 @@ kcp::cstringstream& kcp::cstringstream::operator<<(uint64_t val) {
 kcp::cstringstream& kcp::cstringstream::operator<<(base nb)
 {
     current_base = nb;
+    
+    return *this;
 }
 
 const char* kcp::cstringstream::cstr() {

@@ -1,6 +1,6 @@
 #include "Panic.hpp"
 
-void Panic(const char *meditationString, System::Registers registers) {
+void Panic(const char *meditationString, System::Registers) {
     kerr << "=========== Kernel panic ===========" << Kt::newline;
     kerr << meditationString << Kt::newline;
 
