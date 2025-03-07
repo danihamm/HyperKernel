@@ -49,5 +49,9 @@ namespace kcp
         {
             return array;
         }
+
+        size_t size() {
+            return sz;
+        }
     };
 };
