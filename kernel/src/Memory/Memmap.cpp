@@ -34,16 +34,5 @@ namespace Memory {
         }
 
         return currentLargestSection;
-
-        // PageAllocator pa(currentLargestSection);
-
-        // uint64_t alloc1 = (uint64_t)pa.Allocate();
-        // uint64_t alloc2 = (uint64_t)pa.Allocate();
-        // pa.Free((void *)alloc2);
-        // uint64_t alloc3 = (uint64_t)pa.Allocate();
-
-        // kout << "0x" << base::hex << alloc1 << "\n";
-        // kout << "0x" << base::hex << alloc2 << "\n";
-        // kout << "0x" << base::hex << alloc3 << "\n";
     }
 };
