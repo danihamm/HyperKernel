@@ -41,7 +41,7 @@ namespace kcp
         }
 
         void push_back(T value) {
-            array = (T *)Memory::g_allocator->Realloc(array, sizeof(T) * (sz + 1));
+            array = (T *)Memory::g_heap->Realloc(array, sizeof(T) * (sz + 1));
             array[sz++] = value;
         }
 

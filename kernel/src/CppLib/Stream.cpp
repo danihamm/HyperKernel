@@ -21,7 +21,7 @@ kcp::cstringstream::~cstringstream()
 }
 
 kcp::cstringstream& kcp::cstringstream::operator<<(char c) {
-    this->string = (const char *)Memory::g_allocator->Realloc((void *)this->string, this->size + 1);
+    this->string = (const char *)Memory::g_heap->Realloc((void *)this->string, this->size + 1);
 
     if (!this->string)
     {

@@ -9,10 +9,10 @@
 
 void* operator new(std::size_t size)
 {
-    return Memory::g_allocator->Request(size);
+    return Memory::g_heap->Request(size);
 }
 
 void operator delete(void* block)
 {
-    Memory::g_allocator->Free(block);
+    Memory::g_heap->Free(block);
 }

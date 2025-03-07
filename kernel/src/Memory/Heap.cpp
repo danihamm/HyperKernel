@@ -19,7 +19,7 @@ namespace Memory
 #error Sorry, Unimplemented!
 #endif
 
-    Allocator::Allocator(LargestSection section)
+    HeapAllocator::HeapAllocator(LargestSection section)
     {
         g_section = section;
 
@@ -36,22 +36,21 @@ namespace Memory
 
         current_ref->next = start_block_ptr;
 
-        kout << "[Mem] Allocator created for memory section starting at 0x" << base::hex << section.address << Kt::newline;
+        kout << "[Mem] HeapAllocator object created for memory section starting at 0x" << base::hex << section.address << Kt::newline;
     }
 
-    int i = 1;
-    void* Allocator::Request(size_t size, bool phys) {                
+    void* HeapAllocator::Request(size_t size, bool phys) {                
         Block* current_block_ptr{head.next};
         Block* current_prev_ptr{(Block *)&head};
 
         while (true) {
             if (current_block_ptr == nullptr) {
-                kerr << "An allocator was forced to return a Null pointer. (1)" << Kt::newline;  
+                kerr << "A HeapAllocator was forced to return a Null pointer. (1)" << Kt::newline;  
                 return nullptr;              
             }
 
             if (current_prev_ptr == nullptr) {
-                kerr << "An allocator was forced to return a Null pointer. (2)" << Kt::newline;
+                kerr << "An HeapAllocator was forced to return a Null pointer. (2)" << Kt::newline;
                 return nullptr;
             }
 
@@ -88,21 +87,21 @@ namespace Memory
 
                     continue;
                 } else {
-                    kerr << "An allocator was forced to return a Null pointer. (3)" << Kt::newline;
+                    kerr << "An HeapAllocator was forced to return a Null pointer. (3)" << Kt::newline;
                     return nullptr;
                 }
             }
 
             if (current_block_ptr != nullptr) {
                 if (current_block_ptr->next == nullptr) {
-                    kerr << "An allocator was forced to return a Null pointer. (4)" << Kt::newline;
+                    kerr << "An HeapAllocator was forced to return a Null pointer. (4)" << Kt::newline;
                     return nullptr;
                 }
 
                 current_block_ptr = current_block_ptr->next;
             } else
             {
-                kerr << "An allocator was forced to return a Null pointer. (5)" << Kt::newline;
+                kerr << "An HeapAllocator was forced to return a Null pointer. (5)" << Kt::newline;
                 return nullptr;
             }
         }
@@ -110,7 +109,7 @@ namespace Memory
         return nullptr;
     }
 
-    void* Allocator::Realloc(void* ptr, size_t size) {
+    void* HeapAllocator::Realloc(void* ptr, size_t size) {
         void *new_block = this->Request(size);
 
         if (ptr == nullptr) {
@@ -118,7 +117,7 @@ namespace Memory
         }
 
         if (new_block == nullptr) {
-            kerr << "Reallocation failed due to memory starvation" << Kt::newline;
+            kerr << "HeapAllocator: Reallocation failed due to memory starvation" << Kt::newline;
             return nullptr;
         }
 
@@ -131,7 +130,7 @@ namespace Memory
         return new_block;
     }
 
-    void Allocator::Free(void *pagePtr) {
+    void HeapAllocator::Free(void *pagePtr) {
         if (!IsHDDMVirtAddr((uint64_t)pagePtr)) {
             pagePtr = (void *)HHDM(pagePtr);
         }
@@ -152,16 +151,9 @@ namespace Memory
         // Attach the merged block to the structure
         head.next->next = fmrNext;
     }
-
-    void Allocator::Stress() {
-        // ~410 MiB
-        for (size_t i = 0; i < 100000; i++) {
-            kout << "[Mem] Stress allocation " << base::dec << i << ": " << "0x" << base::hex << (uint64_t)this->Request(PAGE_SIZE, false) << Kt::newline;
-        }
-    }
     
     // Traverses the Allocator's linked list for debugging
-    void Allocator::Walk() {
+    void HeapAllocator::Walk() {
         Block* current = {head.next};
         size_t i{0};
 

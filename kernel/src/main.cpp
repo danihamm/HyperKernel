@@ -22,7 +22,7 @@
 using namespace Kt;
 
 namespace Memory {
-    Allocator* g_allocator;
+    HeapAllocator* g_heap;
     uint64_t HHDMBase;
 };
 
@@ -215,14 +215,6 @@ extern "C" void kmain() {
     Hal::BridgeLoadGDT();
 #endif
 
-    // RGB lines
-    for (std::size_t i = 500; i < 800; i++) {
-        volatile std::uint32_t *fb_ptr = static_cast<volatile std::uint32_t *>(framebuffer->address);
-        fb_ptr[i * (framebuffer->pitch / 4) + (i - 5*5)] = 0xFF0000; // Red
-        fb_ptr[i * (framebuffer->pitch / 4) + (i - 10*5)] = 0x00FF00; // Green
-        fb_ptr[i * (framebuffer->pitch / 4) + (i - 15*5)] = 0x0000FF; // Blue
-    }
-
     uint64_t hhdm_offset = hhdm_request.response->offset;
 
     kout << "[Mem] HHDM offset: 0x" << base::hex << hhdm_offset << newline;
@@ -230,8 +222,9 @@ extern "C" void kmain() {
     Memory::HHDMBase = hhdm_offset;
 
     if (!system_table_request. response || !system_table_request.response->address) {
-        kerr << "[Efi] EFI System Table not supported" << newline;
+        kout << "[Mp] Firmware type: PC BIOS" << newline;
     } else {
+        kout << "[Mp] Firmware type: EFI" << newline;
         kout << "[Efi] EFI system table at 0x" << base::hex << (uint64_t)system_table_request.response->address << newline;
     }
 
@@ -239,9 +232,9 @@ extern "C" void kmain() {
         kout << "[Mem] Creating Allocator for system conventional memory" << newline;
 
         auto result = Memory::Scan(memmap_request.response);
-        auto allocator = Memory::Allocator(result);
+        auto allocator = Memory::HeapAllocator(result);
 
-        Memory::g_allocator = &allocator;
+        Memory::g_heap = &allocator;
     } else {
         Panic("Guru Meditation Error: System memory map missing!", System::Registers{});
     }
