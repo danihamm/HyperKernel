@@ -23,6 +23,9 @@ CC := cc
 # User controllable C++ compiler command.
 CXX := c++
 
+# User controllable Objective C compiler command.
+OBJC := g++
+
 # User controllable archiver command.
 AR := ar
 
@@ -200,15 +203,16 @@ override LDFLAGS += \
 override SRCFILES := $(shell cd src && find -L * -type f | LC_ALL=C sort)
 override CFILES := $(filter %.c,$(SRCFILES))
 override CXXFILES := $(filter %.cpp,$(SRCFILES))
+override OBJCFILES := $(filter %.mm,$(SRCFILES))
 override ASFILES := $(filter %.S,$(SRCFILES))
 ifeq ($(ARCH),x86_64)
 override NASMFILES := $(filter %.asm,$(SRCFILES))
 endif
-override OBJ := $(addprefix obj-$(ARCH)/,$(CFILES:.c=.c.o) $(CXXFILES:.cpp=.cpp.o) $(ASFILES:.S=.S.o))
+override OBJ := $(addprefix obj-$(ARCH)/,$(CFILES:.c=.c.o) $(CXXFILES:.cpp=.cpp.o) $(OBJCFILES:.mm=.mm.o) $(ASFILES:.S=.S.o))
 ifeq ($(ARCH),x86_64)
 override OBJ += $(addprefix obj-$(ARCH)/,$(NASMFILES:.asm=.asm.o))
 endif
-override HEADER_DEPS := $(addprefix obj-$(ARCH)/,$(CFILES:.c=.c.d) $(CXXFILES:.cpp=.cpp.d) $(ASFILES:.S=.S.d))
+override HEADER_DEPS := $(addprefix obj-$(ARCH)/,$(CFILES:.c=.c.d) $(CXXFILES:.cpp=.cpp.d) $(OBJCFILES:.mm=.mm.d) $(ASFILES:.S=.S.d))
 
 # Default target. This must come first, before header dependencies.
 .PHONY: all
@@ -253,6 +257,11 @@ obj-$(ARCH)/%.asm.o: src/%.asm GNUmakefile
 	mkdir -p "$$(dirname $@)"
 	nasm $(NASMFLAGS) $< -o $@
 endif
+
+# Compilation rules for *.mm (Objective C) files.
+obj-$(ARCH)/%.mm.o: src/%.mm GNUmakefile
+	mkdir -p "$$(dirname $@)"
+	$(OBJC) $(CXXFLAGS) $(CPPFLAGS_CXX) -c $< -o $@
 
 # Remove object files and the final executable.
 .PHONY: clean
