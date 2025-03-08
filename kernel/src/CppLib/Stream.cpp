@@ -50,6 +50,13 @@ kcp::cstringstream& kcp::cstringstream::operator<<(char* str) {
     return *this;
 }
 
+kcp::cstringstream& kcp::cstringstream::operator<<(const char* str) {
+    *this << (char*)str;
+
+    return *this;
+}
+
+
 kcp::cstringstream& kcp::cstringstream::operator<<(int num) {
     char* out_str = Lib::int2basestr(num, current_base);
 

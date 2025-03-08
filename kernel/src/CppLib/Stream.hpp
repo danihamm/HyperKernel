@@ -31,6 +31,7 @@ namespace kcp {
         
         cstringstream& operator<<(char c);
         cstringstream& operator<<(char* str);
+        cstringstream& operator<<(const char* str);
 
         cstringstream& operator<<(int num);
         cstringstream& operator<<(uint32_t val);

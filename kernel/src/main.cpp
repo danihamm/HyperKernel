@@ -22,6 +22,8 @@
 #include <Platform/Limine.hpp>
 #include <Platform/Util.hpp>
 
+#include <Hal/IDT.hpp>
+
 using namespace Kt;
 
 namespace Memory {
@@ -87,8 +89,16 @@ extern "C" void kmain() {
 
         Memory::g_heap = &allocator;
     } else {
-        Panic("Guru Meditation Error: System memory map missing!", System::Registers{});
+        Panic("Guru Meditation Error: System memory map missing!", nullptr);
     }
+
+#if defined (__x86_64__)
+    Hal::IDTInitialize();
+#endif
+
+    int*x =(int*)0xffffffff;
+
+    *x=0;
 
     hcf();
 }

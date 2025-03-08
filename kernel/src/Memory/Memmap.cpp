@@ -30,7 +30,7 @@ namespace Memory {
         }
 
         [[unlikely]] if (currentLargestSection.address == 0) {
-            Panic("Couldn't find a usable memory section.", System::Registers{});
+            Panic("Couldn't find a usable memory section.", nullptr);
         }
 
         return currentLargestSection;
