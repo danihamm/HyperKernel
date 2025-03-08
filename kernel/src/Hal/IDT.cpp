@@ -116,9 +116,7 @@ namespace Hal {
         IDTR.Limit = 0x0FF;
         IDTR.Base = (uint64_t)&IDT;
 
-        for (size_t i = 0; i < 32; i++) {
-            SetHandler<0, 31>::run();
-        }
+        SetHandler<0, 31>::run();
 
         kout << "[Hal] Created exception interrupt vectors" << "\n";
 

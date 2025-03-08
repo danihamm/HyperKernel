@@ -7,7 +7,7 @@ void Panic(const char *meditationString, System::PanicFrame* frame) {
 
 #if defined (__x86_64__)
     if (frame != nullptr) {
-        if (frame->InterruptVector == 0xE) { // In case of #PF the CPU pushes some other data to the frame
+        if (frame->InterruptVector == 0xE) { // In case of #PF the CPU pushes an error code to the frame
             auto pf_frame = (System::PageFaultPanicFrame*)frame;
             frame = (System::PanicFrame*)&pf_frame->IP;
 
