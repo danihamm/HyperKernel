@@ -1,23 +1,26 @@
 # OS220
-Research kernel in C++
+Research project aiming to create a modern kernel and operating system in C++
 
-### Implemented (kernel)
-- Global Descriptor Table
-- Output via Flanterm by mintsuki
-- Memory map scanning
-- Kernel-mode heap allocator
+![OS220 handling a page fault exception in the kernel](https://i.imgur.com/P0Qz350.png)
 
-### In progress (kernel)
-- ISR handling (interrupts)
-- Virtual memory paging
-- UEFI runtime service support
-- ACPI & AML support
+### Kernel
+- [x] Global Descriptor Table
+- [x] Output via Flanterm by mintsuki
+- [x] Memory map scanning
+- [-] Kernel-mode heap allocator
+- [ ] ISR handling (interrupts)
+- [ ] Virtual memory paging
+- [ ] UEFI runtime service support
+- [ ] ACPI & AML support
+- [ ] PCI-e
+- [ ] HPET timer
+- [ ] Object manager
+- [ ] Ramdisk
+- [ ] Scheduler
 
-### Implemented (kernel C++ library)
-- new/delete operators via kernel heap
-- String stream (`cstringstream`)
-- Console output stream (`kout`, `kerr`)
-
-### In progress (kernel C++ library)
-- Vector/array class
-- String class
+### Kernel C++ library
+- [x] new/delete operators
+- [x] String stream (`cstringstream`)
+- [x] Console output stream via `operator<<` (`kout`, `kerr`)
+- [x] Vector/array class
+- [ ] String class

@@ -72,6 +72,8 @@ extern "C" void kmain() {
         framebuffer->blue_mask_shift
     );
 
+    kout << "OS220 research kernel project" << "\n" << "Written by Daniel Hammer" << "\n" << "\n";
+
 #if defined (__x86_64__)
     Hal::PrepareGDT();
     Hal::BridgeLoadGDT();
