@@ -7,8 +7,9 @@ Research project aiming to create a modern kernel and operating system in C++
 - [x] Global Descriptor Table
 - [x] Output via Flanterm by mintsuki
 - [x] Memory map scanning
-- [-] Kernel-mode heap allocator
-- [ ] ISR handling (interrupts)
+- [x] Kernel-mode heap allocator
+- [x] ISR handling (interrupts)
+- [x] Exception handling
 - [ ] Virtual memory paging
 - [ ] UEFI runtime service support
 - [ ] ACPI & AML support
