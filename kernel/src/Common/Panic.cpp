@@ -7,11 +7,10 @@ void Panic(const char *meditationString, System::PanicFrame* frame) {
 
 #if defined (__x86_64__)
     if (frame != nullptr) {
+        kerr << "\t" << "InterruptVector: " << "0x" << base::hex << frame->InterruptVector << "\n";
         if (frame->InterruptVector == 0xE) { // In case of #PF the CPU pushes an error code to the frame
             auto pf_frame = (System::PageFaultPanicFrame*)frame;
             frame = (System::PanicFrame*)&pf_frame->IP;
-
-            kerr << "\t" << "InterruptVector: " << "0x" << base::hex << 0xE << "\n";
 
             /* Page fault error details */
             kerr << "\t" << "PageFaultPresent: " << base::dec << pf_frame->PageFaultError.Present << "\n";
@@ -23,9 +22,11 @@ void Panic(const char *meditationString, System::PanicFrame* frame) {
             kerr << "\t" << "PageFaultShadowStack: " << base::dec << pf_frame->PageFaultError.ShadowStack << "\n";
             kerr << "\t" << "PageFaultSGX: " << base::dec << pf_frame->PageFaultError.ShadowStack << "\n";
         }
-        else
-        {
-            kerr << "\t" << "InterruptVector: " << "0x" << base::hex << frame->InterruptVector << "\n";
+        else if (frame->InterruptVector == 0xD) {
+            auto gpf_frame = (System::GPFPanicFrame*)frame;
+            frame = (System::PanicFrame*)&frame->IP;
+
+            kerr << "\t" << "ErrorCode: " << base::dec << gpf_frame->GeneralProtectionFaultError << "\n";
         }
 
         kerr << "\t" << "InstructionPointer: " << "0x" << base::hex << frame->IP << "\n";

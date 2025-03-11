@@ -20,7 +20,7 @@ namespace kcp {
     };
 
     class cstringstream {
-        const char* string;
+        char* string;
         std::size_t size;
 
         base current_base = base::dec;

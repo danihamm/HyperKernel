@@ -6,8 +6,8 @@
 
 #include "Stream.hpp"
 #include <Memory/Heap.hpp>
-#include <Terminal/terminal.hpp>
-#include <Libraries/string.hpp>
+#include <Terminal/Terminal.hpp>
+#include <Libraries/String.hpp>
 
 kcp::cstringstream::cstringstream()
 {
@@ -21,7 +21,7 @@ kcp::cstringstream::~cstringstream()
 }
 
 kcp::cstringstream& kcp::cstringstream::operator<<(char c) {
-    this->string = (const char *)Memory::g_heap->Realloc((void *)this->string, this->size + 1);
+    this->string = (char *)Memory::g_heap->Realloc((void *)this->string, this->size + 2);
 
     if (!this->string)
     {

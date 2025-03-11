@@ -16,6 +16,7 @@ namespace Hal {
     constexpr auto TrapGate = 0x8F;
 
     InterruptDescriptor* IDT;
+    InterruptDescriptor InterruptDescriptorTable[255]{};
     IDTRStruct IDTR{};
 
     const char* ExceptionStrings[] = {
@@ -55,12 +56,12 @@ namespace Hal {
     template<size_t i>
     __attribute__((interrupt)) void ExceptionHandler(System::PanicFrame* frame)
     {
-        kcp::cstringstream stream;
-        stream << "Caught " << base::hex << "0x" << i << " " << ExceptionStrings[i] << " in kernel";
+        // kcp::cstringstream stream;
+        // stream << "Caught " << base::hex << "0x" << i << " " << ExceptionStrings[i] << " in kernel";
 
         frame->InterruptVector = i;
 
-        Panic(stream.cstr(), frame);
+        Panic(ExceptionStrings[i], frame);
     }
 
     void LoadIDT(IDTRStruct& idtr) {
@@ -112,16 +113,16 @@ namespace Hal {
     struct SetHandler<N,N> {static void run() {}};
 
     void IDTInitialize() {
-        IDT = (InterruptDescriptor*)Memory::g_heap->Request(4096);
+        IDT = (InterruptDescriptor*)&InterruptDescriptorTable;
         IDTR.Limit = 0x0FF;
         IDTR.Base = (uint64_t)&IDT;
 
         SetHandler<0, 31>::run();
 
-        kout << "[Hal] Created exception interrupt vectors" << "\n";
+        kout << "HardwareAbstraction: Created exception interrupt vectors" << "\n";
 
         LoadIDT(IDTR);
 
-        kout << "[Hal] Loaded new IDT" << "\n";
+        kout << "HardwareAbstraction: Loaded new IDT" << "\n";
     }
 };

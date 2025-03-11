@@ -1,8 +1,8 @@
-#include "terminal.hpp"
+#include "Terminal.hpp"
 #include "../Libraries/flanterm/backends/fb.h"
 #include "../Libraries/flanterm/flanterm.h"
 
-#include "../Libraries/string.hpp"
+#include "../Libraries/String.hpp"
 
 namespace Kt {
     flanterm_context *ctx;

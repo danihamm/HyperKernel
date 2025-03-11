@@ -5,19 +5,20 @@ namespace Memory {
     class HeapAllocator {
         LargestSection g_section;
 
-        struct Block {
+        struct Node {
             size_t size;
-            Block* next;
+            Node* next;
         };
 
-        struct BlockDescriptor {
-            size_t block_size;
+        struct Metadata {
+            size_t size;
         };
 
-        Block head;
+        Node head{0, 0};
+
     public:
         HeapAllocator(LargestSection section);
-        void* Request(size_t size, bool phys = false);
+        void* Request(size_t size);
         void* Realloc(void* ptr, size_t size);
         void Free(void *pagePtr);
         void Walk();

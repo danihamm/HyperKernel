@@ -3,7 +3,7 @@
 */
 
 #include "GDT.hpp"
-#include "../Terminal/terminal.hpp"
+#include "../Terminal/Terminal.hpp"
 
 // Limine loads a GDT of course, (CS = 0x28) but we will need to make a TSS someday... therefore we load our own now
 
@@ -14,7 +14,7 @@ namespace Hal {
     BasicGDT kernelGDT{};
     
     void PrepareGDT() {
-        kout << "[Hal] GDT at " << base::hex << (uint64_t)&kernelGDT << "\n";
+        kout << "HardwareAbstraction: GDT at " << base::hex << (uint64_t)&kernelGDT << "\n";
         kernelGDT = {
             // Code segment offset 0x08
             // Data segment offset 0x10
@@ -61,10 +61,10 @@ namespace Hal {
     
     void BridgeLoadGDT() {
         // Puts the GDT pointer structure into the GDTR
-        kout << "[Hal] Setting GDTR" << Kt::newline;
+        kout << "HardwareAbstraction: Setting GDTR" << Kt::newline;
         LoadGDT(&gdtPointer);
     
-        kout << "[Hal] Reloading segments" << Kt::newline;
+        kout << "HardwareAbstraction: Reloading segments" << Kt::newline;
         ReloadSegments();
     }
 };

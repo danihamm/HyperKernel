@@ -2,7 +2,7 @@
 #include <cstdint>
 #include <cstddef>
 
-#include <Libraries/string.hpp>
+#include <Libraries/String.hpp>
 #include <CppLib/Stream.hpp>
 
 using namespace kcp;

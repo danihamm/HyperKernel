@@ -1,5 +1,5 @@
 #pragma once
 #include <Platform/Registers.hpp>
-#include <Terminal/terminal.hpp>
+#include <Terminal/Terminal.hpp>
 
 void Panic(const char *meditationString, System::PanicFrame* frame);

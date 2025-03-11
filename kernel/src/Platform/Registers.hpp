@@ -39,5 +39,16 @@ namespace System {
         uint8_t InterruptVector;
     }__attribute__((packed));
 
+    struct GPFPanicFrame {
+        uint64_t GeneralProtectionFaultError;
+        uint64_t IP;
+        uint64_t CS;
+        uint64_t Flags;
+        uint64_t SP;
+        uint64_t SS;
+
+        uint8_t InterruptVector;
+    }__attribute__((packed));
+
 };
 #endif
