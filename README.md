@@ -2,6 +2,8 @@
 Research project aiming to create a modern kernel and operating system in C++
 
 ![OS220 handling a page fault exception in the kernel](https://i.imgur.com/P0Qz350.png)
+*The kernel handling a kernel-mode page fault*
+
 
 ### Kernel
 - [x] Global Descriptor Table
