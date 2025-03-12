@@ -28,10 +28,13 @@
 
 #include <Hal/IDT.hpp>
 
+#include <Memory/PageFrameAllocator.hpp>
+
 using namespace Kt;
 
 namespace Memory {
     HeapAllocator* g_heap;
+    PageFrameAllocator* g_pfa;
     uint64_t HHDMBase;
 };
 
@@ -83,12 +86,11 @@ extern "C" void kmain() {
     Memory::HHDMBase = hhdm_offset;
 
     if (memmap_request.response != nullptr) {
-        kout << "MemoryManagement: Creating global HeapAllocator" << newline;
+        kout << "MemoryManagement: Creating global PageFrameAllocator" << newline;
 
-        auto result = Memory::Scan(memmap_request.response);
-        auto allocator = Memory::HeapAllocator(result);
+        Memory::PageFrameAllocator pmm(Memory::Scan(memmap_request.response));
+        Memory::g_pfa = &pmm;
 
-        Memory::g_heap = &allocator;
     } else {
         Panic("Guru Meditation Error: System memory map missing!", nullptr);
     }
@@ -97,7 +99,5 @@ extern "C" void kmain() {
     Hal::IDTInitialize();
 #endif
 
-    int*a = (int*)0xffffff;
-    *a=10;
     hcf();
 }

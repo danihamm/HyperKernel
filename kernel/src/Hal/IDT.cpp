@@ -10,13 +10,13 @@
 #include <Common/Panic.hpp>
 #include <Platform/Registers.hpp>
 #include <CppLib/Stream.hpp>
+#include <Memory/PageFrameAllocator.hpp>
 
 namespace Hal {
     constexpr auto InterruptGate = 0x8E;
     constexpr auto TrapGate = 0x8F;
 
     InterruptDescriptor* IDT;
-    InterruptDescriptor InterruptDescriptorTable[255]{};
     IDTRStruct IDTR{};
 
     const char* ExceptionStrings[] = {
@@ -113,7 +113,7 @@ namespace Hal {
     struct SetHandler<N,N> {static void run() {}};
 
     void IDTInitialize() {
-        IDT = (InterruptDescriptor*)&InterruptDescriptorTable;
+        IDT = (InterruptDescriptor*)Memory::g_pfa->Allocate();
         IDTR.Limit = 0x0FF;
         IDTR.Base = (uint64_t)&IDT;
 
