@@ -7,7 +7,9 @@
 #pragma once
 #include <cstdint>
 #include <Terminal/Terminal.hpp>
+
 #include <Memory/Heap.hpp>
+
 #include <Memory/PageFrameAllocator.hpp>
 #include <Common/Panic.hpp>
 
@@ -65,13 +67,14 @@ namespace kcp
         size_t size() {
             return sz;
         }
+        
     };
 
     template<typename T>
-    class NoMallocVector : public vector<T> {
+    class noHeapVector : public vector<T> {
         size_t pages = 0;
 public:
-    NoMallocVector() {
+    noHeapVector() {
         kout << "NoMallocVector: constructor called" << Kt::newline;
         pages = 0;
         this->sz = 0;

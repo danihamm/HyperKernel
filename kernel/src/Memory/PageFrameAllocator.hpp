@@ -7,6 +7,8 @@
 #pragma once
 #include "Memmap.hpp"
 
+#include <CppLib/Spinlock.hpp>
+
 namespace Memory {
     class PageFrameAllocator {
         struct Page {
@@ -15,7 +17,7 @@ namespace Memory {
         };
 
         Page head{};
-
+        kcp::Spinlock Lock{};
         LargestSection g_section;
 public:
         PageFrameAllocator(LargestSection section);

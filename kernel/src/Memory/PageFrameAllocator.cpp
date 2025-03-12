@@ -10,6 +10,8 @@
 #include <Libraries/Memory.hpp>
 #include <Terminal/Terminal.hpp>
 
+#include <CppLib/Spinlock.hpp>
+
 namespace Memory {
     PageFrameAllocator::PageFrameAllocator(LargestSection section) {
         /* we need the virtual address rather than the physical address, so we call the helper */
@@ -24,6 +26,8 @@ namespace Memory {
     }
 
     void* PageFrameAllocator::Allocate() {
+        Lock.Aquire();
+
         Page* current = head.next;
         Page* prev = &head;
 
@@ -35,11 +39,15 @@ namespace Memory {
 
                 if (new_size == 0) {
                     prev->next = current->next;
+
+                    Lock.Release();
                     return (void*)current;
                 }
                 else
                 {
                     current->size -= 0x1000;
+
+                    Lock.Release();
                     return (void*)current_end_addr - 0x1000;
                 }
             }
@@ -48,6 +56,7 @@ namespace Memory {
             current = current->next;
         }
 
+        Lock.Release();
         return nullptr;
     }
 
@@ -67,11 +76,13 @@ namespace Memory {
     }
 
     void PageFrameAllocator::Free(void* ptr) {
+        Lock.Aquire();
         auto prev_next = head.next;
         head.next = (Page*)ptr;
 
         head.next->next = prev_next;
         head.next->size = 0x1000;
+        Lock.Release();
     }
 
     void PageFrameAllocator::Free(void* ptr, int n) {

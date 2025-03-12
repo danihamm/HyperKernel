@@ -187,6 +187,7 @@ override CXXFLAGS += \
     -std=gnu++20 \
     -fno-rtti \
     -fno-exceptions \
+    -fmodules-ts \
     $(SHARED_FLAGS)
 
 # Internal linker flags that should not be changed by the user.
