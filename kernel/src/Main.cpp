@@ -75,8 +75,6 @@ extern "C" void kmain() {
         framebuffer->blue_mask_shift
     );
 
-    kout << "OS220 research kernel project" << "\n" << "Written by Daniel Hammer" << "\n" << "\n";
-
 #if defined (__x86_64__)
     Hal::PrepareGDT();
     Hal::BridgeLoadGDT();
@@ -98,6 +96,12 @@ extern "C" void kmain() {
 #if defined (__x86_64__)
     Hal::IDTInitialize();
 #endif
+    kcp::NoMallocVector<int> hello{};
+    hello.push_back(10);
+    hello.push_back(20);
+    hello.push_back(30);
+
+    kout << base::dec << hello.at(0) << hello.at(1) << hello.at(2) << newline;
 
     hcf();
 }

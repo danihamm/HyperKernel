@@ -21,7 +21,9 @@ public:
         PageFrameAllocator(LargestSection section);
 
         void* Allocate();
+        void* ReallocConsecutive(void* ptr, int n);
         void Free(void* ptr);
+        void Free(void* ptr, int n);
     };
 
     extern PageFrameAllocator* g_pfa;

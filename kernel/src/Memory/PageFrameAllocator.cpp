@@ -7,6 +7,9 @@
 #include "PageFrameAllocator.hpp"
 #include "HHDM.hpp"
 
+#include <Libraries/Memory.hpp>
+#include <Terminal/Terminal.hpp>
+
 namespace Memory {
     PageFrameAllocator::PageFrameAllocator(LargestSection section) {
         /* we need the virtual address rather than the physical address, so we call the helper */
@@ -48,11 +51,32 @@ namespace Memory {
         return nullptr;
     }
 
+    void* PageFrameAllocator::ReallocConsecutive(void* ptr, int n) {
+        auto first = Allocate();
+
+        for (int i = 0; i < n - 1; i++) {
+            Allocate();
+        }
+
+        if (ptr != nullptr) {
+            memcpy(first, ptr, n);
+            Free(ptr);
+        }
+
+        return first;
+    }
+
     void PageFrameAllocator::Free(void* ptr) {
         auto prev_next = head.next;
         head.next = (Page*)ptr;
 
         head.next->next = prev_next;
         head.next->size = 0x1000;
+    }
+
+    void PageFrameAllocator::Free(void* ptr, int n) {
+        for (int i = 0; i < n; i++) {
+            Free((void*)(uint64_t)ptr + (0x1000 * n));
+        }
     }
 };

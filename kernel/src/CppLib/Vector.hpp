@@ -8,6 +8,8 @@
 #include <cstdint>
 #include <Terminal/Terminal.hpp>
 #include <Memory/Heap.hpp>
+#include <Memory/PageFrameAllocator.hpp>
+#include <Common/Panic.hpp>
 
 namespace kcp
 {
@@ -16,6 +18,7 @@ namespace kcp
     protected:
         T* array;
         std::size_t sz;
+        std::size_t capacity;
 
     public:
         vector()
@@ -26,7 +29,7 @@ namespace kcp
 
         T& operator[](std::size_t position)
         {
-            if (position > (sz - 1)) {
+            if (position > (capacity - 1)) {
                 kerr << "Vector out of bounds caught!" << Kt::newline;
                 
                 return at(0);
@@ -44,7 +47,11 @@ namespace kcp
         size_t push_back(T value) {
             size_t _sz = sz;
 
-            array = (T *)Memory::g_heap->Realloc(array, sizeof(T) * (sz + 1));
+            if (capacity < sz + 1) {
+                array = (T *)Memory::g_heap->Realloc(array, sizeof(T) * (sz + 1));
+                capacity++;
+            }
+
             array[sz++] = value;
 
             return _sz;
@@ -58,5 +65,36 @@ namespace kcp
         size_t size() {
             return sz;
         }
+    };
+
+    template<typename T>
+    class NoMallocVector : public vector<T> {
+        size_t pages = 0;
+public:
+    NoMallocVector() {
+        kout << "NoMallocVector: constructor called" << Kt::newline;
+        pages = 0;
+        this->sz = 0;
+        this->array = nullptr;
+    }
+
+    size_t push_back(T value) {
+        size_t _sz = this->sz;
+
+        if ((this->pages * 0x1000) <= (sizeof(T) * this->sz)) {
+            if (Memory::g_pfa != nullptr) {
+                this->array = (T *)Memory::g_pfa->ReallocConsecutive(this->array, pages + 1);
+                pages++;
+            }
+            else
+            {
+                Panic("kcp::NoMallocVector used when Memory::g_pfa is not initialized!", nullptr);
+            }
+        }
+
+        this->array[this->sz++] = value;
+
+        return _sz;
+    }
     };
 };
