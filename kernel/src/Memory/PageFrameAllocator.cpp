@@ -6,11 +6,10 @@
 
 #include "PageFrameAllocator.hpp"
 #include "HHDM.hpp"
-
 #include <Libraries/Memory.hpp>
 #include <Terminal/Terminal.hpp>
-
 #include <CppLib/Spinlock.hpp>
+#include <Common/Panic.hpp>
 
 namespace Memory {
     PageFrameAllocator::PageFrameAllocator(LargestSection section) {
@@ -26,7 +25,7 @@ namespace Memory {
     }
 
     void* PageFrameAllocator::Allocate() {
-        Lock.Aquire();
+        Lock.Acquire();
 
         Page* current = head.next;
         Page* prev = &head;
@@ -64,7 +63,9 @@ namespace Memory {
         auto first = Allocate();
 
         for (int i = 0; i < n - 1; i++) {
-            Allocate();
+            if (Allocate() == nullptr) {
+                Panic("PageFrameAllocator Reallocation failed", nullptr);
+            };
         }
 
         if (ptr != nullptr) {
@@ -76,7 +77,7 @@ namespace Memory {
     }
 
     void PageFrameAllocator::Free(void* ptr) {
-        Lock.Aquire();
+        Lock.Acquire();
         auto prev_next = head.next;
         head.next = (Page*)ptr;
 

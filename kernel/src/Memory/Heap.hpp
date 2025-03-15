@@ -3,25 +3,28 @@
 
 namespace Memory {
     class HeapAllocator {
-        LargestSection g_section;
-
         struct Node {
             size_t size;
             Node* next;
         };
 
-        struct Metadata {
-            size_t size;
-        };
+        struct Header {
+            std::size_t size;
+        }__attribute__((packed));
 
-        Node head{0, 0};
+        Node head{};
 
+        Header* GetHeader(void* block);
+        void InsertToFreelist(void* ptr, std::size_t size);
+        void InsertPageToFreelist();
+        void InsertPagesToFreelist(std::size_t n);
     public:
-        HeapAllocator(LargestSection section);
+        HeapAllocator();
         void* Request(size_t size);
         void* Realloc(void* ptr, size_t size);
         void Free(void *pagePtr);
         void Walk();
+        size_t GetAllocatedBlockSize(void* ptr);
     };
 
     extern HeapAllocator* g_heap;

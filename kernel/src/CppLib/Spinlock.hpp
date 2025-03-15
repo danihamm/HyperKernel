@@ -11,7 +11,7 @@ namespace kcp {
     class Spinlock {
         std::atomic_flag atomic_flag{ATOMIC_FLAG_INIT};
     public:
-        void Aquire();
+        void Acquire();
         void Release();
     };
 };

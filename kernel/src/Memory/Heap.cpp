@@ -14,38 +14,122 @@
 #include <Platform/Util.hpp>
 
 #include <Common/Panic.hpp>
+#include <CppLib/Vector.hpp>
+
+#include "PageFrameAllocator.hpp"
 
 namespace Memory
 {
-    constexpr size_t metadata_size = 8; // 8 bytes
-    
-    HeapAllocator::HeapAllocator(LargestSection section)
+    HeapAllocator::Header* HeapAllocator::GetHeader(void* block) {
+        uintptr_t ptr = (uintptr_t)block;
+        return (Header*)(block - sizeof(Header));
+    }
+
+    size_t HeapAllocator::GetAllocatedBlockSize(void* ptr) {
+        Header* header = GetHeader(ptr);
+        return header->size;
+    }
+
+    void HeapAllocator::InsertToFreelist(void* ptr, std::size_t size) {
+        auto prev_next = head.next;
+
+        head.next = (Node*)ptr;
+        head.next->next = prev_next;
+        head.next->size = size;
+    }
+
+    void HeapAllocator::InsertPageToFreelist() {
+        InsertToFreelist(Memory::g_pfa->Allocate(), 0x1000);
+    }
+
+    void HeapAllocator::InsertPagesToFreelist(std::size_t n) {
+        auto ptr = Memory::g_pfa->ReallocConsecutive(nullptr, n);
+        size_t size = 0x1000 * n;
+
+        InsertToFreelist(ptr, size);
+
+        kout << "HeapAllocator: expanded heap by " << base::dec << n << " pages" << Kt::newline;
+    }    
+
+    HeapAllocator::HeapAllocator()
     {
         kout << "HeapAllocator: constructor called" << Kt::newline;
+        InsertPagesToFreelist(8);
     }
 
     void* HeapAllocator::Request(size_t size) {
-        return nullptr;
+        Node* current = head.next;
+        Node* prev = &head;
+
+        size_t sizeNeeded = size + sizeof(Header);
+
+        while (current != nullptr) {
+            if (current->size >= sizeNeeded) {
+                // Unlink the node
+                auto locatedBlockSize = current->size;
+
+                prev->next = current->next;
+                Header* header = (Header*)current;
+                header->size = size;
+
+                void* block = (void*)((uintptr_t)header + sizeof(Header));
+
+                if (locatedBlockSize > sizeNeeded) {
+                    void* rest = (void*)((uintptr_t)header + sizeNeeded);
+                    auto newBlockSize = locatedBlockSize - sizeNeeded;
+
+                    InsertToFreelist(rest, newBlockSize);
+                }
+
+                return block;
+            }
+
+            prev = current;
+            current = current->next;
+        }
+
+        // First pass allocation failed
+        size_t pagesNeeded = size / 0x1000;
+        InsertPagesToFreelist(pagesNeeded);
+
+        return Request(size);
     }
 
     void* HeapAllocator::Realloc(void* ptr, size_t size) {
-        return nullptr;
+        auto new_block = Request(size);
+
+        if (ptr != nullptr && new_block != nullptr) {
+            memcpy(new_block, ptr, size);
+            Free(ptr);
+        }
+
+        return new_block;
     }
 
     void HeapAllocator::Free(void* ptr) {
+        Header* header = GetHeader(ptr);
+        auto size = header->size;
+        auto actualSize = size + sizeof(Header);
+        void* actualBlock = (void*)header;
 
+        auto prev_next = head.next;
+
+        // Relink the full node back into the list
+        head.next = (Node*)actualBlock;
+        head.next->size = actualSize;
+        head.next->next = prev_next;
     }
     
     // Traverses the Allocator's linked list for debugging
     void HeapAllocator::Walk() {
-        // Node* current = {head.next};
-        // size_t i{0};
+        Node* current = {head.next};
+        size_t i{0};
 
-        // while (current != nullptr) {
-        //     kout << "Block " << base::dec << i << " {" << current->size << " bytes & address 0x" << base::hex << (uint64_t)current << "}" << Kt::newline;
-        //     current = current->next;
-        //     i++;
-        // }
+        while (current != nullptr) {
+            kout << "HeapAllocator: " << base::dec << i << " " << current->size << " bytes & address 0x" << base::hex << (uint64_t)current << Kt::newline;
+            current = current->next;
+            i++;
+        }
     }
 
 };

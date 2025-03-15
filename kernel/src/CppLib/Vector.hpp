@@ -75,7 +75,10 @@ namespace kcp
         size_t pages = 0;
 public:
     noHeapVector() {
-        kout << "NoMallocVector: constructor called" << Kt::newline;
+        // We shouldn't have used KernelOutStream in this constructor, will crash if used in a global object
+        // due to global constructors
+        
+        // kout << "NoMallocVector: constructor called" << Kt::newline;
         pages = 0;
         this->sz = 0;
         this->array = nullptr;

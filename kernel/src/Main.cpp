@@ -89,20 +89,18 @@ extern "C" void kmain() {
         Memory::PageFrameAllocator pmm(Memory::Scan(memmap_request.response));
         Memory::g_pfa = &pmm;
 
+        Memory::HeapAllocator heap{};
+        Memory::g_heap = &heap;
+
+        heap.Walk();
+
     } else {
-        Panic("Guru Meditation Error: System memory map missing!", nullptr);
+        Panic("System memory map missing!", nullptr);
     }
 
 #if defined (__x86_64__)
     Hal::IDTInitialize();
 #endif
-    kcp::noHeapVector<int> hello{};
 
-    hello.push_back(10);
-    hello.push_back(20);
-    hello.push_back(30);
-
-    kout << base::dec << hello.at(0) << hello.at(1) << hello.at(2) << newline;
-    
     hcf();
 }

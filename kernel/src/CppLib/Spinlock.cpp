@@ -7,7 +7,7 @@
 #include "Spinlock.hpp"
 
 namespace kcp {
-    void Spinlock::Aquire() {
+    void Spinlock::Acquire() {
         while (atomic_flag.test_and_set(std::memory_order_acquire));
     }
 
