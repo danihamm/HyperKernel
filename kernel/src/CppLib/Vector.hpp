@@ -69,38 +69,4 @@ namespace kcp
         }
         
     };
-
-    template<typename T>
-    class noHeapVector : public vector<T> {
-        size_t pages = 0;
-public:
-    noHeapVector() {
-        // We shouldn't have used KernelOutStream in this constructor, will crash if used in a global object
-        // due to global constructors
-        
-        // kout << "NoMallocVector: constructor called" << Kt::newline;
-        pages = 0;
-        this->sz = 0;
-        this->array = nullptr;
-    }
-
-    size_t push_back(T value) {
-        size_t _sz = this->sz;
-
-        if ((this->pages * 0x1000) <= (sizeof(T) * this->sz)) {
-            if (Memory::g_pfa != nullptr) {
-                this->array = (T *)Memory::g_pfa->ReallocConsecutive(this->array, pages + 1);
-                pages++;
-            }
-            else
-            {
-                Panic("kcp::NoMallocVector used when Memory::g_pfa is not initialized!", nullptr);
-            }
-        }
-
-        this->array[this->sz++] = value;
-
-        return _sz;
-    }
-    };
 };
