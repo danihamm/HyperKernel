@@ -39,6 +39,6 @@ namespace kcp {
 
         cstringstream& operator<<(base nb);
 
-        const char* cstr();
+        const char* c_str();
     };
 };

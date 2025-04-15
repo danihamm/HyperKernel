@@ -32,7 +32,7 @@ namespace Memory
 
     void HeapAllocator::InsertToFreelist(void* ptr, std::size_t size) {
         auto prev_next = head.next;
-
+        
         head.next = (Node*)ptr;
         head.next->next = prev_next;
         head.next->size = size;
@@ -47,13 +47,10 @@ namespace Memory
         size_t size = 0x1000 * n;
 
         InsertToFreelist(ptr, size);
-
-        kout << "HeapAllocator: expanded heap by " << base::dec << n << " pages" << Kt::newline;
-    }    
+    }
 
     HeapAllocator::HeapAllocator()
     {
-        kout << "HeapAllocator: constructor called" << Kt::newline;
         InsertPagesToFreelist(8);
     }
 
@@ -70,6 +67,8 @@ namespace Memory
 
                 prev->next = current->next;
                 Header* header = (Header*)current;
+
+                header->magic = headerMagic;
                 header->size = size;
 
                 void* block = (void*)((uintptr_t)header + sizeof(Header));
@@ -109,15 +108,16 @@ namespace Memory
     void HeapAllocator::Free(void* ptr) {
         Header* header = GetHeader(ptr);
         auto size = header->size;
+        
+        if (header->magic != headerMagic) {
+            Panic("Bad magic in HeapAllocator header", nullptr);
+            return;
+        }
+        
         auto actualSize = size + sizeof(Header);
         void* actualBlock = (void*)header;
 
-        auto prev_next = head.next;
-
-        // Relink the full node back into the list
-        head.next = (Node*)actualBlock;
-        head.next->size = actualSize;
-        head.next->next = prev_next;
+        InsertToFreelist(actualBlock, size);        
     }
     
     // Traverses the Allocator's linked list for debugging

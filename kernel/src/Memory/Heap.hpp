@@ -3,14 +3,17 @@
 
 namespace Memory {
     class HeapAllocator {
+        static constexpr std::size_t headerMagic = 0x6CEF9AB4;
+
         struct Node {
             size_t size;
             Node* next;
         };
 
         struct Header {
+            std::size_t magic;
             std::size_t size;
-        }__attribute__((packed));
+        }__attribute__((packed)) ;
 
         Node head{};
 

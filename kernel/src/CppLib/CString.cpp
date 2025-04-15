@@ -17,7 +17,7 @@ namespace kcp {
 
         do {
             if (*str == delimiter || *str == '\0') {
-                auto cstr = current_stream.cstr();
+                auto cstr = current_stream.c_str();
                 auto cstr_len = Lib::strlen(cstr);
 
                 result.push_back((const char*)Memory::g_heap->Request(sizeof(char) * (cstr_len + 1)));

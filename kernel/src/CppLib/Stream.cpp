@@ -23,9 +23,9 @@ kcp::cstringstream::~cstringstream()
 kcp::cstringstream& kcp::cstringstream::operator<<(char c) {
     this->string = (char *)Memory::g_heap->Realloc((void *)this->string, this->size + 2);
 
-    if (!this->string)
+    if (this->string == nullptr)
     {
-        kerr << "Streaming failed due to failed allocation" << Kt::newline;
+        kerr << "kcp::cstringstream: Streaming failed due to failed allocation" << Kt::newline;
         return *this;
     }
     
@@ -85,6 +85,6 @@ kcp::cstringstream& kcp::cstringstream::operator<<(base nb)
     return *this;
 }
 
-const char* kcp::cstringstream::cstr() {
+const char* kcp::cstringstream::c_str() {
     return this->string;
 }
