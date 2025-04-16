@@ -29,6 +29,7 @@
 #include <Hal/IDT.hpp>
 
 #include <Memory/PageFrameAllocator.hpp>
+#include <Memory/HHDM.hpp>
 
 using namespace Kt;
 
@@ -47,7 +48,7 @@ extern void (*__init_array_end[])();
 
 extern "C" void kmain() {
     if (LIMINE_BASE_REVISION_SUPPORTED == false) {
-        hcf();
+        Hal::Halt();
     }
 
     // Call global constructors.
@@ -57,7 +58,7 @@ extern "C" void kmain() {
 
     if (framebuffer_request.response == nullptr
      || framebuffer_request.response->framebuffer_count < 1) {
-        hcf();
+        Hal::Halt();
     }
     
     limine_framebuffer *framebuffer{framebuffer_request.response->framebuffers[0]};
@@ -84,11 +85,12 @@ extern "C" void kmain() {
     Memory::HHDMBase = hhdm_offset;
 
     if (memmap_request.response != nullptr) {
-        kout << "MemoryManagement: Creating global PageFrameAllocator" << newline;
+        Kt::KernelLogStream(OK, "MemoryManagement") << "Creating PageFrameAllocator";
 
         Memory::PageFrameAllocator pmm(Memory::Scan(memmap_request.response));
         Memory::g_pfa = &pmm;
 
+        Kt::KernelLogStream(OK, "MemoryManagement") << "Creating HeapAllocator";
         Memory::HeapAllocator heap{};
         Memory::g_heap = &heap;
 
@@ -102,5 +104,5 @@ extern "C" void kmain() {
     Hal::IDTInitialize();
 #endif
 
-    hcf();
+    Hal::Halt();
 }

@@ -15,7 +15,7 @@ namespace kcp {
         vector<const char*> result;
         cstringstream current_stream = cstringstream();
 
-        do {
+        while (true) {
             if (*str == delimiter || *str == '\0') {
                 auto cstr = current_stream.c_str();
                 auto cstr_len = Lib::strlen(cstr);
@@ -35,7 +35,7 @@ namespace kcp {
 
             current_stream << (char)*str;
             str++;
-        } while  (*str != '\0');
+        };
         
         return result;
     }

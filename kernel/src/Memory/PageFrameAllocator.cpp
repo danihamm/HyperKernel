@@ -22,6 +22,8 @@ namespace Memory {
         head.next = (Page*)g_section.address;
         head.next->size = section.size;
         head.next->next = nullptr;
+
+        Kt::KernelLogStream(Kt::DEBUG, "PageFrameAllocator") << "New pool size: " << section.size;
     }
 
     void* PageFrameAllocator::Allocate() {

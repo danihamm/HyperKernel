@@ -12,6 +12,6 @@
 // but should not be removed, unless you know what you are doing.
 extern "C" {
     int __cxa_atexit(void (*)(void *), void *, void *) { return 0; }
-    void __cxa_pure_virtual() { hcf(); }
+    void __cxa_pure_virtual() { Hal::Halt(); }
     void *__dso_handle;
 }

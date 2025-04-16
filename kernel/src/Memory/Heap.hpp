@@ -1,9 +1,11 @@
 #pragma once
 #include "Memmap.hpp"
+#include <CppLib/Spinlock.hpp>
 
 namespace Memory {
     class HeapAllocator {
         static constexpr std::size_t headerMagic = 0x6CEF9AB4;
+        kcp::Spinlock Lock;
 
         struct Node {
             size_t size;

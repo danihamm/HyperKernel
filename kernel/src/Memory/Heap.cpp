@@ -51,10 +51,12 @@ namespace Memory
 
     HeapAllocator::HeapAllocator()
     {
-        InsertPagesToFreelist(8);
+        InsertPagesToFreelist(0x32);
     }
 
     void* HeapAllocator::Request(size_t size) {
+        Lock.Acquire();
+
         Node* current = head.next;
         Node* prev = &head;
 
@@ -79,12 +81,15 @@ namespace Memory
 
                     InsertToFreelist(rest, newBlockSize);
                 }
-
+                
+                Lock.Release();
                 return block;
             }
 
             prev = current;
             current = current->next;
+
+            Lock.Release();
         }
 
         // First pass allocation failed
@@ -106,6 +111,8 @@ namespace Memory
     }
 
     void HeapAllocator::Free(void* ptr) {
+        Lock.Acquire();
+        
         Header* header = GetHeader(ptr);
         auto size = header->size;
         
@@ -113,11 +120,13 @@ namespace Memory
             Panic("Bad magic in HeapAllocator header", nullptr);
             return;
         }
-        
+
         auto actualSize = size + sizeof(Header);
         void* actualBlock = (void*)header;
 
-        InsertToFreelist(actualBlock, size);        
+        InsertToFreelist(actualBlock, size);
+
+        Lock.Release();
     }
     
     // Traverses the Allocator's linked list for debugging
@@ -126,7 +135,7 @@ namespace Memory
         size_t i{0};
 
         while (current != nullptr) {
-            kout << "HeapAllocator: " << base::dec << i << " " << current->size << " bytes & address 0x" << base::hex << (uint64_t)current << Kt::newline;
+            Kt::KernelLogStream(Kt::DEBUG, "HeapAllocator") << base::dec << i << " " << current->size << " bytes & address 0x" << base::hex << (uint64_t)current;
             current = current->next;
             i++;
         }

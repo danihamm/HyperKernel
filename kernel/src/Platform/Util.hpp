@@ -7,4 +7,6 @@
 #pragma once
 
 // Halt and catch fire function.
-void hcf();
+namespace Hal {
+    __attribute__((noreturn)) void Halt();
+};

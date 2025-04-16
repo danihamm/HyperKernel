@@ -1,11 +1,11 @@
 /*
     * gdt.hpp
+    * Intel Global Descriptor Table
+    * Copyright (c) 2025 Daniel Hammer
 */
 
 #include "GDT.hpp"
 #include "../Terminal/Terminal.hpp"
-
-// Limine loads a GDT of course, (CS = 0x28) but we will need to make a TSS someday... therefore we load our own now
 
 namespace Hal {
     using namespace Kt;
@@ -14,39 +14,14 @@ namespace Hal {
     BasicGDT kernelGDT{};
     
     void PrepareGDT() {
-        kout << "HardwareAbstraction: GDT at " << base::hex << (uint64_t)&kernelGDT << "\n";
         kernelGDT = {
-            // Code segment offset 0x08
-            // Data segment offset 0x10
-                
-            // Not sure if having LimitLow set to 0xFFFF for the Null segment is kosher
-            {0xFFFF, 0, 0, 0x00, 0x00, 0},
-    
-            // Kernel code/data
+            {0xFFFF, 0, 0, 0x00, 0x00, 0},    
+            {0xFFFF, 0, 0, 0x9A, 0xA0, 0},
+            {0xFFFF, 0, 0, 0x92, 0xA0, 0},    
             {0xFFFF, 0, 0, 0x9A, 0xA0, 0},
             {0xFFFF, 0, 0, 0x92, 0xA0, 0},
-    
-            // User code/data
-            {0xFFFF, 0, 0, 0x9A, 0xA0, 0},
-            {0xFFFF, 0, 0, 0x92, 0xA0, 0},
-    
-            // One day this will point to our actual TSS
-            {
-                // Limit = sizeof(TSS) - 1
-                0,
-    
-                // Base = &TSS
-                0,
-                0,
-                
-                // Access byte = 0xFA
-                0xFA,
-    
-                // Granularity = 0x00
-                0x00,
-    
-                0x0
-            }
+
+            {0, 0, 0, 0xFA, 0x00, 0x0},
         };
     
         gdtPointer = GDTPointer{
@@ -60,11 +35,9 @@ namespace Hal {
     extern "C" void ReloadSegments();
     
     void BridgeLoadGDT() {
-        // Puts the GDT pointer structure into the GDTR
-        kout << "HardwareAbstraction: Setting GDTR" << Kt::newline;
         LoadGDT(&gdtPointer);
-    
-        kout << "HardwareAbstraction: Reloading segments" << Kt::newline;
         ReloadSegments();
+
+        KernelLogStream(DEBUG, "HardwareAbstraction") << "Set new GDT (0x" << base::hex << (uint64_t)&kernelGDT << ")";
     }
 };

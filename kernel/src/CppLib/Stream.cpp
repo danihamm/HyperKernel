@@ -25,7 +25,7 @@ kcp::cstringstream& kcp::cstringstream::operator<<(char c) {
 
     if (this->string == nullptr)
     {
-        kerr << "kcp::cstringstream: Streaming failed due to failed allocation" << Kt::newline;
+        Kt::KernelLogStream(Kt::ERROR, "kcp::cstringstream") << "Character streaming failed due to failed allocation.";
         return *this;
     }
     

@@ -56,11 +56,7 @@ namespace Hal {
     template<size_t i>
     __attribute__((interrupt)) void ExceptionHandler(System::PanicFrame* frame)
     {
-        // kcp::cstringstream stream;
-        // stream << "Caught " << base::hex << "0x" << i << " " << ExceptionStrings[i] << " in kernel";
-
         frame->InterruptVector = i;
-
         Panic(ExceptionStrings[i], frame);
     }
 
@@ -119,10 +115,10 @@ namespace Hal {
 
         SetHandler<0, 31>::run();
 
-        kout << "HardwareAbstraction: Created exception interrupt vectors" << "\n";
+        Kt::KernelLogStream(Kt::OK, "HardwareAbstraction") << "Created exception interrupt vectors";
 
         LoadIDT(IDTR);
 
-        kout << "HardwareAbstraction: Loaded new IDT" << "\n";
+        Kt::KernelLogStream(Kt::OK, "HardwareAbstraction") << "Loaded new IDT";
     }
 };

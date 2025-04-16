@@ -18,8 +18,6 @@ namespace Memory {
             }
             
             if (entry->type == LIMINE_MEMMAP_USABLE) {
-                kout << "MemoryManagement: Found conventional memory section (size = " << base::dec << entry->length << " bytes, address = 0x" << base::hex << (uint64_t)entry->base << ")" << newline;                
-                
                 if (entry->length > currentLargestSection.size) {
                     currentLargestSection = {
                         .address = (uint64_t)entry->base,
