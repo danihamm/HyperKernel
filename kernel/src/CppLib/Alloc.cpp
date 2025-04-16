@@ -12,9 +12,19 @@ void* operator new(std::size_t size)
     return Memory::g_heap->Request(size);
 }
 
+void* operator new[](std::size_t size)
+{
+    return Memory::g_heap->Request(size);
+}
+
 void operator delete(void* block)
 {
     Memory::g_heap->Free(block);
+}
+
+void operator delete[](void* block)
+{
+    delete block;
 }
 
 void operator delete(void* block, long unsigned int)

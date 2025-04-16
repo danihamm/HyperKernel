@@ -7,7 +7,6 @@
 #include <cstdint>
 #include <cstddef>
 #include <limine.h>
-
 #include <Hal/GDT.hpp>
 #include <Terminal/Terminal.hpp>
 #include <Libraries/String.hpp>
@@ -16,20 +15,16 @@
 #include <Memory/Memmap.hpp>
 #include <Memory/Heap.hpp>
 #include <Memory/HHDM.hpp>
-
 #include <CppLib/Stream.hpp>
 #include <CppLib/Vector.hpp>
 #include <CppLib/CString.hpp>
-
 #include <Platform/Limine.hpp>
 #include <Platform/Util.hpp>
-
 #include <Libraries/Memory.hpp>
-
 #include <Hal/IDT.hpp>
-
 #include <Memory/PageFrameAllocator.hpp>
 #include <Memory/HHDM.hpp>
+#include <Io/IoPort.hpp>
 
 using namespace Kt;
 
