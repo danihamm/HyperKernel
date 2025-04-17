@@ -61,6 +61,13 @@ namespace Memory {
         return nullptr;
     }
 
+    void* PageFrameAllocator::AllocateZeroed() {
+        auto page = Allocate();
+        memset(page, 0, 0x1000);
+
+        return page;
+    }
+
     void* PageFrameAllocator::ReallocConsecutive(void* ptr, int n) {
         auto first = Allocate();
 

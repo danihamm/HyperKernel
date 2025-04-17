@@ -38,6 +38,6 @@ namespace Hal {
         LoadGDT(&gdtPointer);
         ReloadSegments();
 
-        KernelLogStream(DEBUG, "HardwareAbstraction") << "Set new GDT (0x" << base::hex << (uint64_t)&kernelGDT << ")";
+        KernelLogStream(DEBUG, "Hal") << "Set new GDT (0x" << base::hex << (uint64_t)&kernelGDT << ")";
     }
 };

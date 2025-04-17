@@ -8,7 +8,7 @@ Research project aiming to create a modern kernel and operating system in C++
 - [x] Kernel-mode heap allocator
 - [x] ISR handling (interrupts)
 - [x] Exception handling
-- [ ] Virtual memory paging
+- [x] Virtual memory paging
 - [ ] UEFI runtime service support
 - [ ] ACPI & AML support
 - [ ] PCI-e

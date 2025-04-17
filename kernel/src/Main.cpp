@@ -25,6 +25,7 @@
 #include <Memory/PageFrameAllocator.hpp>
 #include <Memory/HHDM.hpp>
 #include <Io/IoPort.hpp>
+#include <Memory/Paging.hpp>
 
 using namespace Kt;
 
@@ -40,6 +41,9 @@ KernelErrorStream kerr{};
 // Extern declarations for global constructors array.
 extern void (*__init_array[])();
 extern void (*__init_array_end[])();
+
+extern "C" uint64_t KernelStartSymbol;
+extern "C" uint64_t KernelEndSymbol;
 
 extern "C" void kmain() {
     if (LIMINE_BASE_REVISION_SUPPORTED == false) {
@@ -80,12 +84,12 @@ extern "C" void kmain() {
     Memory::HHDMBase = hhdm_offset;
 
     if (memmap_request.response != nullptr) {
-        Kt::KernelLogStream(OK, "MemoryManagement") << "Creating PageFrameAllocator";
+        Kt::KernelLogStream(OK, "Mem") << "Creating PageFrameAllocator";
 
         Memory::PageFrameAllocator pmm(Memory::Scan(memmap_request.response));
         Memory::g_pfa = &pmm;
 
-        Kt::KernelLogStream(OK, "MemoryManagement") << "Creating HeapAllocator";
+        Kt::KernelLogStream(OK, "Mem") << "Creating HeapAllocator";
         Memory::HeapAllocator heap{};
         Memory::g_heap = &heap;
 
@@ -95,9 +99,22 @@ extern "C" void kmain() {
         Panic("System memory map missing!", nullptr);
     }
 
+
 #if defined (__x86_64__)
     Hal::IDTInitialize();
 #endif
+
+    // auto kaddr_request_response = kernel_address_request.response;
+
+    Memory::VMM::Paging g_paging{};
+
+    g_paging.Init((uint64_t)&KernelStartSymbol, ((uint64_t)&KernelEndSymbol - (uint64_t)&KernelStartSymbol));
+    // g_paging.Map(0xcfc0000, 0xcfc0000);
+
+    // kout << "0x" << base::hex << Memory::VMM::GetCR3();
+
+    kout << "0x" << base::hex << 0xdeadbeef << "\n";
+    kout << "0x" << base::hex << Memory::HHDM(0xdeadbeef) << "\n";
 
     Hal::Halt();
 }

@@ -1,9 +1,9 @@
 #include "Panic.hpp"
 
 void Panic(const char *meditationString, System::PanicFrame* frame) {
-    kerr << "\nGuru Meditation" << "\n" << "\n";
+    kerr << "\nKernel panic" << "\n" << "\n";
     
-    kerr << "\t" << "MeditationString: " << meditationString << Kt::newline;
+    kerr << "\t" << meditationString << Kt::newline;
 
 #if defined (__x86_64__)
     if (frame != nullptr) {

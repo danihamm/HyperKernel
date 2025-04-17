@@ -23,6 +23,7 @@ public:
         PageFrameAllocator(LargestSection section);
 
         void* Allocate();
+        void* AllocateZeroed();
         void* ReallocConsecutive(void* ptr, int n);
         void Free(void* ptr);
         void Free(void* ptr, int n);

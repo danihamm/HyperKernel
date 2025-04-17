@@ -115,10 +115,10 @@ namespace Hal {
 
         SetHandler<0, 31>::run();
 
-        Kt::KernelLogStream(Kt::OK, "HardwareAbstraction") << "Created exception interrupt vectors";
+        Kt::KernelLogStream(Kt::OK, "Hal") << "Created exception interrupt vectors";
 
         LoadIDT(IDTR);
 
-        Kt::KernelLogStream(Kt::OK, "HardwareAbstraction") << "Loaded new IDT";
+        Kt::KernelLogStream(Kt::OK, "Hal") << "Loaded new IDT";
     }
 };

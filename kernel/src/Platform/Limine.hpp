@@ -51,7 +51,7 @@ namespace {
         .revision = 0,
         .response = nullptr
     };
-    
+
     }
     
     // Finally, define the start and end markers for the Limine requests.
