@@ -14,32 +14,43 @@ namespace Memory::VMM {
         PML4 = (PageTable*)SubHHDM((PageTable*)Memory::g_pfa->AllocateZeroed());
     }
 
-    void Paging::Init(std::uint64_t kernelBaseVirt, std::uint64_t kernelSize) {
+    void Paging::Init(std::uint64_t kernelBaseVirt, std::uint64_t kernelSize, limine_memmap_response* memMap) {
         // Map kernel
         Kt::KernelLogStream(Kt::DEBUG, "VMM") << "Paging::Init called with kernelBaseVirt as 0x" << base::hex << kernelBaseVirt << " and kernelSize as " << base::dec << kernelSize;
 
         for (std::uint64_t pageAddr = kernelBaseVirt; pageAddr < (kernelBaseVirt + kernelSize); pageAddr += 0x1000) {
-            Kt::KernelLogStream(Kt::DEBUG, "VMM") << "Mapping 0x" << base::hex << GetPhysKernelAddress(pageAddr) << " to 0x" << pageAddr;
             Map(GetPhysKernelAddress(pageAddr), pageAddr);
         }
 
-        // TODO map HHDM
-        // TODO map ACPI tables
+        // Map HHDM memMap entries
 
-        LoadCR3((PageTable*)&PML4);
+        for (size_t i = 0; i < memMap->entry_count; i++) {
+            auto entry = memMap->entries[i];
+            
+            for (size_t pageAddr = entry->base; pageAddr < (entry->base + entry->length); pageAddr += 0x1000) {
+                Map(pageAddr, HHDM(pageAddr));
+            }            
+        }
+
+        LoadCR3(PML4);
+        Kt::KernelLogStream(Kt::OK, "VMM") << "Switched CR3";
     }
 
     PageTable* Paging::HandleLevel(VirtualAddress virtualAddress, PageTable* table, const size_t level) {
         PageTableEntry* entry = (PageTableEntry*)Memory::HHDM(&table->entries[virtualAddress.GetIndex(level)]);
         
-        entry->Present = true;
-        entry->Writable = true;
-
-        uint64_t downLevelAddr = Memory::SubHHDM((uint64_t)Memory::g_pfa->AllocateZeroed());
-
-        entry->Address = downLevelAddr >> 12;
-
-        return (PageTable*)downLevelAddr;
+        if (!entry->Present) {
+            entry->Present = true;
+            entry->Writable = true;
+    
+            uint64_t downLevelAddr = Memory::SubHHDM((uint64_t)Memory::g_pfa->AllocateZeroed());
+    
+            entry->Address = downLevelAddr >> 12;
+    
+            return (PageTable*)downLevelAddr;
+        } else {
+            return (PageTable*)(entry->Address << 12);
+        }
     }
 
     void Paging::Map(std::uint64_t physicalAddress, std::uint64_t virtualAddress) {
@@ -58,7 +69,7 @@ namespace Memory::VMM {
         pageEntry->Present = true;
         pageEntry->Writable = true;
 
-        pageEntry->Address = virtualAddress >> 12;
+        pageEntry->Address = physicalAddress >> 12;
     }
 
     std::uint64_t Paging::GetPhysAddr(std::uint64_t pml4, std::uint64_t virtualAddress, bool use40BitL1) {

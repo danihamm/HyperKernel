@@ -102,19 +102,11 @@ extern "C" void kmain() {
 
 #if defined (__x86_64__)
     Hal::IDTInitialize();
-#endif
-
-    // auto kaddr_request_response = kernel_address_request.response;
 
     Memory::VMM::Paging g_paging{};
+    g_paging.Init((uint64_t)&KernelStartSymbol, ((uint64_t)&KernelEndSymbol - (uint64_t)&KernelStartSymbol), memmap_request.response);
 
-    g_paging.Init((uint64_t)&KernelStartSymbol, ((uint64_t)&KernelEndSymbol - (uint64_t)&KernelStartSymbol));
-    // g_paging.Map(0xcfc0000, 0xcfc0000);
-
-    // kout << "0x" << base::hex << Memory::VMM::GetCR3();
-
-    kout << "0x" << base::hex << 0xdeadbeef << "\n";
-    kout << "0x" << base::hex << Memory::HHDM(0xdeadbeef) << "\n";
+#endif
 
     Hal::Halt();
 }

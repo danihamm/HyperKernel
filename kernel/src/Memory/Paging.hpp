@@ -1,4 +1,5 @@
 #pragma once
+#include <limine.h>
 #include <cstdint>
 #include <Terminal/Terminal.hpp>
 
@@ -87,7 +88,7 @@ namespace Memory::VMM {
         PageTable* HandleLevel(VirtualAddress virtualAddress, PageTable* table, size_t level);
 public:
         Paging();
-        void Init(std::uint64_t kernelBaseVirt, std::uint64_t kernelSize);
+        void Init(std::uint64_t kernelBaseVirt, std::uint64_t kernelSize, limine_memmap_response* memMap);
         void Map(std::uint64_t physicalAddress, std::uint64_t virtualAddress);
         static std::uint64_t GetPhysAddr(std::uint64_t PML4, std::uint64_t virtualAddress, bool use40BitL1 = false);
         std::uint64_t GetPhysAddr(std::uint64_t virtualAddress);
