@@ -16,7 +16,7 @@ namespace Memory::VMM {
 
     void Paging::Init(std::uint64_t kernelBaseVirt, std::uint64_t kernelSize, limine_memmap_response* memMap) {
         // Map kernel
-        Kt::KernelLogStream(Kt::DEBUG, "VMM") << "Paging::Init called with kernelBaseVirt as 0x" << base::hex << kernelBaseVirt << " and kernelSize as " << base::dec << kernelSize;
+        Kt::KernelLogStream(Kt::DEBUG, "VMM") << "Paging::Init called with kernelBaseVirt as 0x" << base::hex << kernelBaseVirt;
 
         for (std::uint64_t pageAddr = kernelBaseVirt; pageAddr < (kernelBaseVirt + kernelSize); pageAddr += 0x1000) {
             Map(GetPhysKernelAddress(pageAddr), pageAddr);

@@ -13,6 +13,8 @@
 #include <Memory/PageFrameAllocator.hpp>
 #include <Common/Panic.hpp>
 
+#include <initializer_list>
+
 namespace kcp
 {
     template<typename T>
@@ -27,6 +29,16 @@ namespace kcp
         {
             sz = 0;
             array = nullptr;
+        }
+
+        vector(std::initializer_list<T> initList) {
+            sz = 0;
+            array = nullptr;
+
+            for (auto itr = initList.begin(); itr != initList.end(); itr++) {
+                T item = *itr;
+                push_back(item);
+            }
         }
 
         T& operator[](std::size_t position)

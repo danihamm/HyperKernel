@@ -26,6 +26,7 @@
 #include <Memory/HHDM.hpp>
 #include <Io/IoPort.hpp>
 #include <Memory/Paging.hpp>
+#include <ACPI/ACPI.hpp>
 
 using namespace Kt;
 
@@ -108,5 +109,7 @@ extern "C" void kmain() {
 
 #endif
 
+    Hal::ACPI g_acpi((Hal::ACPI::XSDP*)Memory::HHDM(rsdp_request.response->address));
+    
     Hal::Halt();
 }

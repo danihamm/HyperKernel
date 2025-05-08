@@ -52,6 +52,13 @@ namespace {
         .response = nullptr
     };
 
+    __attribute__((used, section(".limine_requests")))
+    volatile limine_rsdp_request rsdp_request = {
+        .id = LIMINE_RSDP_REQUEST,
+        .revision = 0,
+        .response = nullptr
+    };
+
     }
     
     // Finally, define the start and end markers for the Limine requests.
