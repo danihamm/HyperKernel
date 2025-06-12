@@ -56,30 +56,6 @@ namespace Hal {
     }
 
     ACPI::ACPI(XSDP* xsdp) {
-        ACPITables = new kcp::vector({
-            "APIC",
-            "BERT",
-            "CPEP",
-            "DSDT",
-            "ECDT",
-            "EINJ",
-            "ERST",
-            "FACP",
-            "FACS",
-            "HEST",
-            "MSCT",
-            "MPST",
-            "OEM",
-            "PMTT",
-            "PSDT",
-            "RASF",
-            "SBST",
-            "SLIT",
-            "SRAT",
-            "SSDT"
-            }
-        );
-
         if (xsdp->TestChecksum() != true) {
             KernelLogStream(ERROR, "ACPI") << "Checksum failed for (R/X)SDT!";
             return;
@@ -102,7 +78,5 @@ namespace Hal {
             nextTableAddress = xsdp->RSDTAddress;
             HandleRSDT((CommonSDTHeader*)Memory::HHDM(nextTableAddress));
         }
-
-        // KernelLogStream(DEBUG, "ACPI") << nextTableType.c_str() << " located at 0x" << base::hex << nextTableAddress;
     }
 };
