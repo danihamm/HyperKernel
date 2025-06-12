@@ -1,6 +1,6 @@
 #include "Terminal.hpp"
-#include "../Libraries/flanterm/flanterm_backends/fb.h"
-#include "../Libraries/flanterm/flanterm.h"
+#include "../Libraries/flanterm/src/flanterm_backends/fb.h"
+#include "../Libraries/flanterm/src/flanterm.h"
 
 #include "../Libraries/String.hpp"
 
