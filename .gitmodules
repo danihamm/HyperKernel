@@ -1,0 +1,3 @@
+[submodule "kernel/src/Libraries/flanterm"]
+	path = kernel/src/Libraries/flanterm
+	url = https://codeberg.org/mintsuki/flanterm.git
