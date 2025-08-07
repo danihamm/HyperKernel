@@ -7,6 +7,8 @@
 #pragma once
 #include <CppLib/Vector.hpp>
 
+typedef const char* CString;
+
 namespace kcp {
-    vector<const char*> splitstr(const char* str, char delimiter);
+    vector<const char*> splitstr(CString str, char delimiter);
 };

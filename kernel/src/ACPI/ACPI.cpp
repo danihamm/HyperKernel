@@ -57,11 +57,11 @@ namespace Hal {
 
     ACPI::ACPI(XSDP* xsdp) {
         if (xsdp->TestChecksum() != true) {
-            KernelLogStream(ERROR, "ACPI") << "Checksum failed for (R/X)SDT!";
+            KernelLogStream(ERROR, "ACPI") << "Checksum failed for SDT!";
             return;
         }
 
-        KernelLogStream(OK, "ACPI") << "Checksum passed for (R/X)SDT!";
+        KernelLogStream(OK, "ACPI") << "Checksum passed for SDT";
 
 
         KernelLogStream(INFO, "ACPI") << "OEM ID: " << xsdp->GetOEMID();

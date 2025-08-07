@@ -99,41 +99,12 @@ namespace Kt
 
     class KernelLogStream {
         KernelOutStream localStream{};
-        KernelLogLevel level;
 
         const char* componentName = "";
 
 public:
-        KernelLogStream(KernelLogLevel desiredLevel, const char* desiredComponentName) {
-            level = desiredLevel;
+        KernelLogStream(KernelLogLevel, const char* desiredComponentName) { /* level for potential future rich event logging */
             componentName = desiredComponentName;
-
-            switch (level) {
-                case INFO: {
-                    localStream << screen::colors::cyan << "INFO " << screen::colors::white;
-                    break;
-                }
-
-                case WARNING: {
-                    localStream << screen::colors::yellow << "WARNING " << screen::colors::white;
-                    break;
-                }
-
-                case ERROR: {
-                    localStream << screen::colors::red << "ERROR " << screen::colors::white;
-                    break;
-                }
-
-                case DEBUG: {
-                    localStream << screen::colors::magenta << "DEBUG " << screen::colors::white;
-                    break;
-                }
-
-                case OK: {
-                    localStream << screen::colors::green << "OK " << screen::colors::white;
-                    break ;
-                }
-            }
 
             localStream << componentName << ": ";
         }
