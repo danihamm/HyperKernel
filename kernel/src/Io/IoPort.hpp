@@ -23,17 +23,18 @@ namespace Io {
         asm ("outl %0, %1" : : "a"(value), "Nd"(port) : "memory");
     }
 
-    inline uint8_t In8(uint16_t port) {
-        asm ("inb %0" : : "Nd"(port) : "memory");
-    }
+    /* TODO fix */
+    // inline uint8_t In8(uint16_t port) {
+    //     asm ("inb %0" : : "Nd"(port) : "memory");
+    // }
 
-    inline uint16_t In16(uint16_t port) {
-        asm ("inw %0" : : "Nd"(port) : "memory");
-    }
+    // inline uint16_t In16(uint16_t port) {
+    //     asm ("inw %0" : : "Nd"(port) : "memory");
+    // }
 
-    inline uint32_t In32(uint16_t port) {
-        asm ("inl %0" : : "Nd"(port) : "memory");
-    }
+    // inline uint32_t In32(uint16_t port) {
+    //     asm ("inl %0" : : "Nd"(port) : "memory");
+    // }
 
     inline void IoPortWait() {
         Out8(0x80, 0);

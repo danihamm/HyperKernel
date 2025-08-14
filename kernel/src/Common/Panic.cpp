@@ -1,49 +1,79 @@
+/*
+    * Panic.cpp
+    * Copyright (c) 2025 Daniel Hammer
+*/
+
 #include "Panic.hpp"
+#include "../CppLib/BoxUI.hpp"
 
 void Panic(const char *meditationString, System::PanicFrame* frame) {
-    kerr << "\nKernel panic" << "\n" << "\n";
-    
-    kerr << "\t" << meditationString << Kt::newline;
+    const int boxWidth = 72;
+
+    // Header
+    kerr << BOXUI_ANSI_RED_BG << BOXUI_ANSI_WHITE_FG << BOXUI_ANSI_BOLD << "\n";
+    kerr << BOXUI_TL;
+    for (int i = 0; i < boxWidth - 2; ++i) kerr << BOXUI_H;
+    kerr << BOXUI_TR << "\n";
+    PrintBoxedLine(kerr, "!!! KERNEL PANIC !!!", boxWidth, true);
+    PrintBoxedLine(kerr, "", boxWidth);
+    PrintBoxedLine(kerr, "System halted. Please reboot.", boxWidth, true);
+    PrintBoxedLine(kerr, "", boxWidth);
+    PrintBoxedSeparator(kerr, boxWidth);
+    PrintBoxedLine(kerr, "Meditation:", boxWidth, true);
+    PrintBoxedLine(kerr, meditationString, boxWidth);
+    PrintBoxedLine(kerr, "", boxWidth);
 
 #if defined (__x86_64__)
     if (frame != nullptr) {
-        kerr << "\t" << "InterruptVector: " << "0x" << base::hex << frame->InterruptVector << "\n";
-        if (frame->InterruptVector == 0xE) { // In case of #PF the CPU pushes an error code to the frame
+        PrintBoxedSeparator(kerr, boxWidth);
+        PrintBoxedLine(kerr, "CPU State:", boxWidth, true);
+        PrintBoxedHex(kerr, "Interrupt Vector", frame->InterruptVector, boxWidth);
+
+        if (frame->InterruptVector == 0xE) {
             auto pf_frame = (System::PageFaultPanicFrame*)frame;
             frame = (System::PanicFrame*)&pf_frame->IP;
-
-            /* Page fault error details */
-            kerr << "\t" << "PageFaultPresent: " << base::dec << pf_frame->PageFaultError.Present << "\n";
-            kerr << "\t" << "PageFaultWrite: " << base::dec << pf_frame->PageFaultError.Write << "\n";
-            kerr << "\t" << "PageFaultUser: " << base::dec << pf_frame->PageFaultError.User << "\n";
-            kerr << "\t" << "PageFaultReservedWrite: " << base::dec << pf_frame->PageFaultError.ReservedWrite << "\n";
-            kerr << "\t" << "PageFaultInstructionFetch: " << base::dec << pf_frame->PageFaultError.InstructionFetch << "\n";
-            kerr << "\t" << "PageFaultProtectionKey: " << base::dec << pf_frame->PageFaultError.ProtectionKey << "\n";
-            kerr << "\t" << "PageFaultShadowStack: " << base::dec << pf_frame->PageFaultError.ShadowStack << "\n";
-            kerr << "\t" << "PageFaultSGX: " << base::dec << pf_frame->PageFaultError.ShadowStack << "\n";
-        }
-        else if (frame->InterruptVector == 0xD) {
+            PrintBoxedLine(kerr, "Page Fault Error:", boxWidth, true);
+            PrintBoxedDec(kerr, "Present", pf_frame->PageFaultError.Present, boxWidth);
+            PrintBoxedDec(kerr, "Write", pf_frame->PageFaultError.Write, boxWidth);
+            PrintBoxedDec(kerr, "User", pf_frame->PageFaultError.User, boxWidth);
+            PrintBoxedDec(kerr, "Reserved Write", pf_frame->PageFaultError.ReservedWrite, boxWidth);
+            PrintBoxedDec(kerr, "Instruction Fetch", pf_frame->PageFaultError.InstructionFetch, boxWidth);
+            PrintBoxedDec(kerr, "Protection Key", pf_frame->PageFaultError.ProtectionKey, boxWidth);
+            PrintBoxedDec(kerr, "Shadow Stack", pf_frame->PageFaultError.ShadowStack, boxWidth);
+            PrintBoxedDec(kerr, "SGX", pf_frame->PageFaultError.SGX, boxWidth);
+        } else if (frame->InterruptVector == 0xD) {
             auto gpf_frame = (System::GPFPanicFrame*)frame;
             frame = (System::PanicFrame*)&frame->IP;
-
-            kerr << "\t" << "ErrorCode: " << base::dec << gpf_frame->GeneralProtectionFaultError << "\n";
+            PrintBoxedLine(kerr, "General Protection Fault:", boxWidth, true);
+            PrintBoxedDec(kerr, "Error Code", gpf_frame->GeneralProtectionFaultError, boxWidth);
         }
 
-        kerr << "\t" << "InstructionPointer: " << "0x" << base::hex << frame->IP << "\n";
-        kerr << "\t" << "CodeSegment: " << "0x" << base::hex << frame->CS << "\n";
-        kerr << "\t" << "Flags: " << "0x" << base::hex << frame->Flags << "\n";
-        kerr << "\t" << "StackPointer: " << "0x" << base::hex << frame->SP << "\n";   
-        kerr << "\t" << "StackSegment: " << "0x" << base::hex << frame->SS << "\n";   
+        PrintBoxedSeparator(kerr, boxWidth);
+        PrintBoxedLine(kerr, "Registers:", boxWidth, true);
+        PrintBoxedHex(kerr, "Instruction Pointer", frame->IP, boxWidth);
+        PrintBoxedHex(kerr, "Code Segment", frame->CS, boxWidth);
+        PrintBoxedHex(kerr, "Flags", frame->Flags, boxWidth);
+        PrintBoxedHex(kerr, "Stack Pointer", frame->SP, boxWidth);
+        PrintBoxedHex(kerr, "Stack Segment", frame->SS, boxWidth);
     }
 #endif
+
+    PrintBoxedLine(kerr, "", boxWidth);
+
+    // Footer
+    kerr << BOXUI_BL;
+    for (int i = 0; i < boxWidth - 2; ++i) kerr << BOXUI_H;
+    kerr << BOXUI_BR << "\n";
+    kerr << BOXUI_ANSI_RESET;
+
     while (true) {
-        #if defined (__x86_64__)
+#if defined (__x86_64__)
         asm ("cli");
         asm ("hlt");
-        #elif defined (__aarch64__) || defined (__riscv)
+#elif defined (__aarch64__) || defined (__riscv)
         asm ("wfi");
-        #elif defined (__loongarch64)
+#elif defined (__loongarch64)
         asm ("idle 0");
-        #endif
+#endif
     }
 }

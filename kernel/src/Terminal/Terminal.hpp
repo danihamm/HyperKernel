@@ -1,3 +1,9 @@
+/*
+    * Terminal.hpp
+    * Terminal implementation
+    * Copyright (c) 2025 Daniel Hammer
+*/
+
 #pragma once
 #include <cstdint>
 #include <cstddef>
@@ -35,6 +41,8 @@ namespace Kt
                     std::uint8_t blue_mask_size, std::uint8_t blue_mask_shift);
     void Putchar(char c);
     void Print(const char *text);
+
+    void UpdatePanelBar(const char* panelText);
 
     inline base base_custom(int custom)
     {

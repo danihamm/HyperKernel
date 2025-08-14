@@ -27,6 +27,7 @@
 #include <Io/IoPort.hpp>
 #include <Memory/Paging.hpp>
 #include <ACPI/ACPI.hpp>
+#include <CppLib/BoxUI.hpp>
 
 using namespace Kt;
 
@@ -76,6 +77,7 @@ extern "C" void kmain() {
         framebuffer->blue_mask_shift
     );
 
+
 #if defined (__x86_64__)
     Hal::PrepareGDT();
     Hal::BridgeLoadGDT();
@@ -108,8 +110,9 @@ extern "C" void kmain() {
     g_paging.Init((uint64_t)&KernelStartSymbol, ((uint64_t)&KernelEndSymbol - (uint64_t)&KernelStartSymbol), memmap_request.response);
 
 #endif
-
     Hal::ACPI g_acpi((Hal::ACPI::XSDP*)Memory::HHDM(rsdp_request.response->address));
-    
+    Efi::SystemTable* ST = (Efi::SystemTable*)Memory::HHDM(system_table_request.response->address);
+    Efi::Init(ST);
+
     Hal::Halt();
 }

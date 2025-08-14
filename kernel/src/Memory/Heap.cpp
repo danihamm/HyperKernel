@@ -21,7 +21,6 @@
 namespace Memory
 {
     HeapAllocator::Header* HeapAllocator::GetHeader(void* block) {
-        uintptr_t ptr = (uintptr_t)block;
         return (Header*)(block - sizeof(Header));
     }
 
